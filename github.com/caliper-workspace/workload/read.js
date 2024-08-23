@@ -15,9 +15,9 @@ class MyWorkload extends WorkloadModuleBase {
             console.log(`Worker ${this.workerIndex}: Creating asset ${assetID}`);
             const request = {
                 contractId: this.roundArguments.contractId,
-                contractFunction: 'CreateAsset',
-                invokerIdentity: 'User1',
-                contractArguments: [assetID,'blue','20','penguin','500'],
+                contractFunction: 'createAsset',
+                invokerIdentity: 'client',
+                contractArguments: [assetID,'100','10000'],
                 readOnly: false
             };
 
@@ -29,8 +29,8 @@ class MyWorkload extends WorkloadModuleBase {
         const randomId = Math.floor(Math.random()*this.roundArguments.assets);
         const myArgs = {
             contractId: this.roundArguments.contractId,
-            contractFunction: 'ReadAsset',
-            invokerIdentity: 'User1',
+            contractFunction: 'queryAsset',
+            invokerIdentity: 'client',
             contractArguments: [`${this.workerIndex}_${randomId}`],
             readOnly: true
         };
@@ -44,8 +44,8 @@ class MyWorkload extends WorkloadModuleBase {
             console.log(`Worker ${this.workerIndex}: Deleting asset ${assetID}`);
             const request = {
                 contractId: this.roundArguments.contractId,
-                contractFunction: 'DeleteAsset',
-                invokerIdentity: 'User1',
+                contractFunction: 'deleteAsset',
+                invokerIdentity: 'client',
                 contractArguments: [assetID],
                 readOnly: false
             };

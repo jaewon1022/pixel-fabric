@@ -15,9 +15,9 @@ class MyWorkload extends WorkloadModuleBase {
             console.log(`Worker ${this.workerIndex}: Creating asset ${assetID}`);
             const request = {
                 contractId: this.roundArguments.contractId,
-                contractFunction: 'CreateAsset',
-                invokerIdentity: 'User1',
-                contractArguments: [assetID,'blue','20','penguin','500'],
+                contractFunction: 'createAsset',
+                invokerIdentity: 'client',
+                contractArguments: [assetID,'100', '10000'],
                 readOnly: false
             };
 
@@ -27,11 +27,23 @@ class MyWorkload extends WorkloadModuleBase {
 
     async submitTransaction() {
         const randomId = Math.floor(Math.random()*this.roundArguments.assets);
+
+	const assetSet = [
+	    { price: "10", totalStock: "100000" },
+	    { price: "20", totalStock: "50000" },
+	    { price: "40", totalStock: "25000" },
+	    { price: "50", totalStock: "20000" },
+	    { price: "100", totalStock: "10000" },
+	    { price: "200", totalStock: "5000" },
+	];
+
+	const randomAsset = assetSet[Math.floor(Math.random() * assetSet.length)];
+
         const myArgs = {
             contractId: this.roundArguments.contractId,
-            contractFunction: 'UpdateAsset',
-            invokerIdentity: 'User1',
-            contractArguments: [`${this.workerIndex}_${randomId}`, 'yellow', '10', 'newOwner', '100'],
+            contractFunction: 'updateAsset',
+            invokerIdentity: 'client',
+            contractArguments: [`${this.workerIndex}_${randomId}`, randomAsset.price, randomAsset.totalStock],
             readOnly: false
         };
 
@@ -44,8 +56,8 @@ class MyWorkload extends WorkloadModuleBase {
             console.log(`Worker ${this.workerIndex}: Deleting asset ${assetID}`);
             const request = {
                 contractId: this.roundArguments.contractId,
-                contractFunction: 'DeleteAsset',
-                invokerIdentity: 'User1',
+                contractFunction: 'deleteAsset',
+                invokerIdentity: 'client',
                 contractArguments: [assetID],
                 readOnly: false
             };

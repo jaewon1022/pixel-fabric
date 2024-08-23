@@ -17,7 +17,7 @@ test:
           module: workload/read.js
           arguments:
             assets: 10
-            contractId: basic
+            contractId: pixelterior-go
       - label: Write Transaction
         description: Write asset benchmark
         txDuration: 30
@@ -31,4 +31,4 @@ test:
           module: workload/write.js
           arguments:
             assets: 1000
-            contractId: basic
+            contractId: pixelterior-go
