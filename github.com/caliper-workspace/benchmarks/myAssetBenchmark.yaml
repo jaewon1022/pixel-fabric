@@ -1,0 +1,34 @@
+test:
+    name: basic-contract-benchmark
+    description: test benchmark
+    workers:
+      number: 10
+    rounds:
+      - label: Read Transaction
+        description: Read asset benchmark
+        txDuration: 30
+        rateControl:
+          type: fixed-load
+          opts: {
+            transactionLoad: 4000,
+            startTps: 2000
+          }
+        workload:
+          module: workload/read.js
+          arguments:
+            assets: 10
+            contractId: basic
+      - label: Write Transaction
+        description: Write asset benchmark
+        txDuration: 30
+        rateControl:
+          type: fixed-load
+          opts: {
+            transactionLoad: 100,
+            startTps: 100
+          }
+        workload:
+          module: workload/write.js
+          arguments:
+            assets: 1000
+            contractId: basic
