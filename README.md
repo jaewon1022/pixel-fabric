@@ -16,3 +16,9 @@ Memory : 32 GB
 Fabric Version : 1.4.12
 Caliper Version : 0.6.0
 ```
+
+#### 체인 코드 수정 및 배포 방법
+1. github.com/hyperledger/fabric/examples/pixelterior/chaincode/go/chaincode.go 파일 수정
+2. /cds 파일로 이동
+3. peer chaincode package -n {파일명} -p {체인코드 위치}/cmd -v {버전} {파일명}.cds 입력
+4. 생성된 cds 파일 커밋 후 네이버 클라우드 플랫폼에 cds 업로드 및 인스턴스화
