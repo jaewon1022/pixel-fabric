@@ -153,10 +153,10 @@
                     </tr>
 
                     <tr>
-                         <td>Read Transaction</td> <td>91026</td> <td>0</td> <td>3034.4</td> <td>0.20</td> <td>0.01</td> <td>0.03</td> <td>3033.9</td>
+                         <td>Read Transaction</td> <td>0</td> <td>85522</td> <td>2851.3</td> <td>-</td> <td>-</td> <td>-</td> <td>2850.9</td>
                     </tr>
                     <tr>
-                         <td>Write Transaction</td> <td>14815</td> <td>81</td> <td>495.9</td> <td>0.34</td> <td>0.03</td> <td>0.15</td> <td>495.5</td>
+                         <td>Write Transaction</td> <td>0</td> <td>98543</td> <td>3295.5</td> <td>-</td> <td>-</td> <td>-</td> <td>3295.1</td>
                     </tr>
                 </table>
             </div>
@@ -176,7 +176,7 @@ rateControl:
                                      <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
                                 </tr>
                                 <tr>
-                                     <td>Read Transaction</td> <td>91026</td> <td>0</td> <td>3034.4</td> <td>0.20</td> <td>0.01</td> <td>0.03</td> <td>3033.9</td>
+                                     <td>Read Transaction</td> <td>0</td> <td>85522</td> <td>2851.3</td> <td>-</td> <td>-</td> <td>-</td> <td>2850.9</td>
                                 </tr>
                             </table>
                         <h3>Resource utilization for Read Transaction</h3>
@@ -198,7 +198,7 @@ rateControl:
                                      <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
                                 </tr>
                                 <tr>
-                                     <td>Write Transaction</td> <td>14815</td> <td>81</td> <td>495.9</td> <td>0.34</td> <td>0.03</td> <td>0.15</td> <td>495.5</td>
+                                     <td>Write Transaction</td> <td>0</td> <td>98543</td> <td>3295.5</td> <td>-</td> <td>-</td> <td>-</td> <td>3295.1</td>
                                 </tr>
                             </table>
                         <h3>Resource utilization for Write Transaction</h3>
@@ -224,7 +224,7 @@ rounds:
       module: workload&#x2F;read.js
       arguments:
         assets: 10
-        contractId: basic
+        contractId: pixelterior-go
   - label: Write Transaction
     description: Write asset benchmark
     txDuration: 30
@@ -237,7 +237,7 @@ rounds:
       module: workload&#x2F;write.js
       arguments:
         assets: 1000
-        contractId: basic
+        contractId: pixelterior-go
 </pre>
                 <h3>SUT</h3>
                 <pre id="sutdetails">not provided</pre>

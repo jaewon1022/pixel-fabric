@@ -20,5 +20,4 @@ organizations:
           path: './generated/client.pem'
     connectionProfile:
       path: './generated/connection_property_org-msp.json'
-# Uncomment the next line only if you want to try this network configuration file binding to fabric:2.2, it's not required for fabric-gateway binding
       discover: true
