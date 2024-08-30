@@ -1,0 +1,23 @@
+name: Calier test
+version: "2.0.0"
+
+caliper:
+  blockchain: fabric
+
+channels:
+  - channelName: channel1
+    contracts:
+    - id: fabric
+
+organizations:
+  - mspid: org-msp
+    identities:
+      certificates:
+      - name: 'geniesoft-organization'
+        clientPrivateKey:
+          path: 'generated/geniesoft-organization.key'
+        clientSignedCert:
+          path: 'generated/geniesoft-organization.pem'
+    connectionProfile:
+      path: 'generated/connection_property_org-msp.json'
+      discover: true
