@@ -6,6 +6,7 @@ Pixelterior 프로젝트의 P2P 거래 기능 구현을 위해 `hyperledger-fabr
 
 #### Server Spec
 해당 프로젝트는 네이버 클라우드 플랫폼 `high-cpu c16-g3` 요금제를 사용하고 있으며,
+
 각 서버 스펙 별 자세한 요금제는 [여기](https://www.ncloud.com/product/compute/ssdServer#pricing)에서 확인하실 수 있습니다.
 
 ```
@@ -15,6 +16,8 @@ vCPU : 16 개
 Memory : 32 GB
 Fabric Version : 1.4.12
 Caliper Version : 0.6.0
+Node Version : v12.22.12
+Npm Version : v6.14.16
 ```
 
 #### 체인 코드 수정 및 배포 방법
