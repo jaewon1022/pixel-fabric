@@ -1,4 +1,4 @@
-name: Calier test
+name: Caliper Test
 version: "2.0.0"
 
 caliper:
@@ -7,17 +7,17 @@ caliper:
 channels:
   - channelName: channel1
     contracts:
-    - id: fabric
+      - id: pixelterior-go
 
 organizations:
   - mspid: org-msp
     identities:
       certificates:
-      - name: 'geniesoft-organization'
-        clientPrivateKey:
-          path: 'generated/geniesoft-organization.key'
-        clientSignedCert:
-          path: 'generated/geniesoft-organization.pem'
+        - name: "client"
+          clientPrivateKey:
+            path: generated/client.key
+          clientSignedCert:
+            path: generated/client.pem
     connectionProfile:
-      path: 'generated/connection_property_org-msp.json'
-      discover: true
+      path: generated/connection_property_org-msp.json
+#      discover: true

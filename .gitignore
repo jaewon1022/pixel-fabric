@@ -1,2 +1,4 @@
 caliper-workspace/generated/*
 caliper-workspace/node_modules/*
+
+!caliper-workspace/generated/README.md

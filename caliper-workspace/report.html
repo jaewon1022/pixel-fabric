@@ -126,7 +126,7 @@
             <ul>
                 <h3>&nbspBasic information</h3>
                 <li>DLT: &nbsp<span style="font-weight: 500;">fabric</span></li>
-                <li>Name: &nbsp<span style="font-weight: 500;">basic-contract-benchmark</span></li>
+                <li>Name: &nbsp<span style="font-weight: 500;">benchmarking chaincode-go</span></li>
                 <li>Description: &nbsp<span style="font-weight: 500;"></span></li>
                 <li>Benchmark Rounds: &nbsp<span style="font-weight: 500;">1</span></li>
                 <li><a href="#benchmarkInfo">Details</a></li>
@@ -152,19 +152,19 @@
                     </tr>
 
                     <tr>
-                         <td>Read Transaction</td> <td>17346</td> <td>4120</td> <td>665.9</td> <td>11.50</td> <td>0.01</td> <td>3.03</td> <td>665.8</td>
+                         <td>Read Transaction</td> <td>22484</td> <td>13909</td> <td>1232.5</td> <td>5.37</td> <td>0.01</td> <td>2.75</td> <td>1232.2</td>
                     </tr>
                 </table>
             </div>
             <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="Read Transaction">
                 <h2>Benchmark round: Read Transaction</h2>
-                <p>Read asset benchmark</p>
+                <p></p>
                 <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 30
 rateControl:
   type: fixed-load
   opts:
     transactionLoad: 4000
-    startTps: 2000
+    startingTps: 2000
 </pre>
                         <h3>Performance metrics for Read Transaction</h3>
                             <table style="min-width: 100%;">
@@ -172,7 +172,7 @@ rateControl:
                                      <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
                                 </tr>
                                 <tr>
-                                     <td>Read Transaction</td> <td>17346</td> <td>4120</td> <td>665.9</td> <td>11.50</td> <td>0.01</td> <td>3.03</td> <td>665.8</td>
+                                     <td>Read Transaction</td> <td>22484</td> <td>13909</td> <td>1232.5</td> <td>5.37</td> <td>0.01</td> <td>2.75</td> <td>1232.2</td>
                                 </tr>
                             </table>
                         <h3>Resource utilization for Read Transaction</h3>
@@ -181,23 +181,22 @@ rateControl:
             <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;">
                 <h2>Test Environment</h2>
                 <h3>benchmark config</h3>
-                <pre id="benchmarkInfo" style="overflow: visible;white-space: pre-wrap;max-height:100%;">name: basic-contract-benchmark
+                <pre id="benchmarkInfo" style="overflow: visible;white-space: pre-wrap;max-height:100%;">name: benchmarking chaincode-go
 workers:
   number: 10
 rounds:
   - label: Read Transaction
-    description: Read asset benchmark
     txDuration: 30
     rateControl:
       type: fixed-load
       opts:
         transactionLoad: 4000
-        startTps: 2000
+        startingTps: 2000
     workload:
       module: workload&#x2F;read.js
       arguments:
         assets: 10
-        contractId: fabric
+        contractId: pixelterior-go
 </pre>
                 <h3>SUT</h3>
                 <pre id="sutdetails">not provided</pre>
