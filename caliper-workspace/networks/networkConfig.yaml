@@ -20,4 +20,4 @@ organizations:
             path: generated/client.pem
     connectionProfile:
       path: generated/connection_property_org-msp.json
-#      discover: true
+      discover: false
