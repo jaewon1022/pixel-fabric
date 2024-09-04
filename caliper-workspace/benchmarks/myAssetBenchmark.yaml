@@ -14,7 +14,7 @@ test:
         module: workload/read.js
         arguments:
           assets: 10
-          contractId: pixelterior-go
+          contractId: fabric
     # - label: Write Transaction
     #   txDuration: 60
     #   rateControl:
