@@ -1,20 +1,23 @@
 test:
-  name: benchmarking chaincode-go
+  name: benchmarking chaincode
   workers:
-    number: 10
+    number: 5
 
   rounds:
     - label: Read Transaction
       txDuration: 30
       rateControl:
-        type: fixed-load
-        opts: { transactionLoad: 4000, startingTps: 2000 }
+        type: fixed-rate
+        opts:
+          tps: 2000
+#        type: fixed-load
+#        opts: { transactionLoad: 4000, startingTps: 2000 }
 
       workload:
         module: workload/read.js
         arguments:
           assets: 10
-          contractId: fabric
+          contractId: pixelterior-go
     # - label: Write Transaction
     #   txDuration: 60
     #   rateControl:

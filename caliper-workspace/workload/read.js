@@ -23,7 +23,7 @@ class ReadWorkload extends WorkloadModuleBase {
       sutAdapter,
       sutContext
     );
-/*
+
     for (let i = 1; i <= this.roundArguments.assets; i++) {
       const assetId = `${this.workerIndex}-${i}`;
       console.log(
@@ -39,10 +39,10 @@ class ReadWorkload extends WorkloadModuleBase {
       };
 
       await this.sutAdapter.sendRequests(txArgs);
-    }*/
+    }
   }
 
-  async submitTransaction() {/*
+  async submitTransaction() {
     const randomId = Math.floor(Math.random() * this.roundArguments.assets) + 1;
 
     let txArgs = {
@@ -52,20 +52,11 @@ class ReadWorkload extends WorkloadModuleBase {
       contractArguments: [`${this.workerIndex}-${randomId}`],
       readOnly: true,
     };
-*/
-
-    let txArgs = {
-      contractId: this.roundArguments.contractId,
-      contractFunction: "queryCar",
-      invokerIdentity: "client",
-      contractArguments: ['CAR0'],
-      readOnly: true,
-    };
 
     return this.sutAdapter.sendRequests(txArgs);
   }
 
-  async cleanupWorkloadModule() {/*
+  async cleanupWorkloadModule() {
     for (let i = 1; i <= this.roundArguments.assets; i++) {
       const assetId = `${this.workerIndex}-${i}`;
 
@@ -82,7 +73,7 @@ class ReadWorkload extends WorkloadModuleBase {
       };
 
       await this.sutAdapter.sendRequests(txArgs);
-    }*/
+    }
   }
 }
 
