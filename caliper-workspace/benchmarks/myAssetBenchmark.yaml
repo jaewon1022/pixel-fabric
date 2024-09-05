@@ -1,30 +1,27 @@
 test:
   name: benchmarking chaincode
   workers:
-    number: 5
+    number: 10
 
   rounds:
-    - label: Read Transaction
-      txDuration: 30
-      rateControl:
-        type: fixed-rate
-        opts:
-          tps: 2000
+#    - label: Read Transaction
+#      txDuration: 60
+#      rateControl:
 #        type: fixed-load
-#        opts: { transactionLoad: 4000, startingTps: 2000 }
-
-      workload:
-        module: workload/read.js
-        arguments:
-          assets: 10
-          contractId: pixelterior-go
-    # - label: Write Transaction
-    #   txDuration: 60
-    #   rateControl:
-    #     type: fixed-rate
-    #     opts:
-    #       tps: 1000
-    #   workload:
-    #     module: workload/write.js
-    #     arguments:
-    #       contractId: fabric
+#        opts: { transactionLoad: 5000, startingTps: 2000 }
+#      workload:
+#        module: workload/read.js
+#        arguments:
+#          assets: 10
+#          contractId: pixelterior-go
+     - label: Write Transaction
+       txDuration: 60
+       rateControl:
+         type: fixed-rate
+         opts:
+           tps: 1000
+       workload:
+         module: workload/write.js
+         arguments:
+           assets: 1000
+           contractId: fabric
