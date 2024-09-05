@@ -24,4 +24,4 @@ test:
          module: workload/write.js
          arguments:
            assets: 1000
-           contractId: fabric
+           contractId: pixelterior-go

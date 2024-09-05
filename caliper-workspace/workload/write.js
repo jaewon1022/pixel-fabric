@@ -23,6 +23,23 @@ class ReadWorkload extends WorkloadModuleBase {
       sutAdapter,
       sutContext
     );
+
+    for(let i = 1; i <= this.roundArguments.assets; i++) {
+      const assetId = `${this.workerIndex}-${i}`;
+      console.log(
+        `Creating asset "${this.workerIndex}-${i}" by workerNode ${workerIndex}`
+      );
+
+      let txArgs = {
+        contractId: this.roundArguments.contractId,
+        contractFunction: "createAsset",
+        invokerIdentity: "client",
+        contractArguments: [assetId, "100", "10000"],
+        readOnly: false,
+      };
+
+      await this.sutAdapter.sendRequests(txArgs);
+    }
   }
 
   async submitTransaction() {
@@ -40,6 +57,23 @@ class ReadWorkload extends WorkloadModuleBase {
   }
 
   async cleanupWorkloadModule() {
+    for (let i = 1; i <= this.roundArguments.assets; i++) {
+      const assetId = `${this.workerIndex}-${i}`;
+
+      console.log(
+        `Deleting asset "${assetId}" by workerNode ${this.workerIndex}`
+      );
+
+      let txArgs = {
+        contractId: this.roundArguments.contractId,
+        contractFunction: "deleteAsset",
+        invokerIdentity: "client",
+        contractArguments: [assetId],
+        readOnly: false,
+      };
+
+      await this.sutAdapter.sendRequests(txArgs);
+    }
   }
 }
 
