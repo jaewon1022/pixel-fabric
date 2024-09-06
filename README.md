@@ -26,3 +26,9 @@ Npm Version : v6.14.16
 3. /cds 파일로 이동
 4. 체인코드 패키징 ( peer chaincode package -n `pixelterior-go` -p `github.com/hyperledger/fabric/examples/chaincode/go/pixelterior/cmd` -v `0.0.000` `pixelterior-go.v0.0.000.cds` )
 5. 생성된 cds 파일 커밋 후 네이버 클라우드 플랫폼에 cds 업로드 및 인스턴스화
+
+## Docs
+### ERC-1155 표준?
+- <a href="https://andyjaewon.notion.site/PixelTerior-ERC-1155-c98676a0a3ae46ce85f1ec86d2815b7c">ERC-1155 표준</a>
+### UTXO vs Account Model
+- <a href="UTXO%20vs%20Account%20Model.md">UTXO vs Account Model</a>
