@@ -14,14 +14,15 @@ test:
         arguments:
           assets: 10
           contractId: pixelterior-go
-    - label: Write Transaction
-      txDuration: 60
-      rateControl:
-        type: fixed-rate
-        opts:
-          tps: 500
-      workload:
-        module: workload/write.js
-        arguments:
-          assets: 1000
-          contractId: pixelterior-go
+
+#    - label: Write Transaction
+#      txDuration: 60
+#      rateControl:
+#        type: fixed-rate
+#        opts:
+#          tps: 350
+#      workload:
+#        module: workload/write.js
+#        arguments:
+#          assets: 1000
+#          contractId: pixelterior-go
