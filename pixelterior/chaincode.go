@@ -13,33 +13,21 @@ type SimpleChaincode struct {
 }
 
 type Wallet struct {
-	Balance int       `json:"balance"`
-	Address string    `json:"address"`
-	Assets  []MyAsset `json:"assets"`
+	Balance int            `json:"balance"`
+	Address string         `json:"address"`
+	Tokens  map[string]int `json:"tokens"`
 }
 
 type User struct {
-    Name    string         `json:"name"`
-    Wallet  Wallet         `json:"wallet"`
-    Tokens  map[string]int `json:"tokens"`
+	Name    string `json:"name"`
+	Wallet  Wallet `json:"wallet"`
 }
 
 type Token struct {
-    Name     string `json:"name"`
-    Symbol   string `json:"symbol"`
-    Decimals int    `json:"decimals"`
-    TotalSupply int `json:"totalSupply"`
-}
-
-type MyAsset struct {
-	Name   string `json:"name"`
-	Amount int    `json:"amount"`
-}
-
-type Asset struct {
-	Name       string `json:"name"`
-	Price      int    `json:"price"`
-	TotalStock int    `json:"totalStock"`
+	Name     string `json:"name"`
+	Symbol   string `json:"symbol"`
+	Decimals int    `json:"decimals"`
+	TotalSupply int `json:"totalSupply"`
 }
 
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
@@ -52,25 +40,24 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
         TotalSupply: 1000000,
     }
     tokenJSON, _ := json.Marshal(token)
-    stub.PutState("token", tokenJSON)
+
+    stub.PutState("MTK", tokenJSON)
 
 	user1 := User{
 		Name: "user1",
 		Wallet: Wallet{
 			Address: "0x1234",
 			Balance: 10000,
-			Assets:  []MyAsset{{Name: "asset1", Amount: 10}},
+			Tokens: map[string]int{"MTK": 500000},
 		},
-		Tokens: map[string]int{"MTK": 500000},
 	}
 	user2 := User{
 		Name: "user2",
 		Wallet: Wallet{
 			Address: "0x5678",
 			Balance: 10000,
-			Assets:  []MyAsset{{Name: "asset1", Amount: 10}},
+			Tokens: map[string]int{"MTK": 500000},
 		},
-		Tokens: map[string]int{"MTK": 500000},
 	}
 
 
@@ -80,13 +67,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	stub.PutState("user1", user1JSON)
 	stub.PutState("user2", user2JSON)
 
-	asset1 := Asset{Name: "asset1", Price: 100, TotalStock: 10000}
-	asset2 := Asset{Name: "asset2", Price: 200, TotalStock: 10000}
-
-	assets := map[string]Asset{"asset1": asset1, "asset2": asset2}
-
-	assetsJSON, _ := json.Marshal(assets)
-	stub.PutState("assets", assetsJSON)
+	fmt.Println("ex02 Initialized well")
 
 	return shim.Success(nil)
 }
