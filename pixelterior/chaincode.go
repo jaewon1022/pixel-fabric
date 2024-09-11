@@ -79,8 +79,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.deleteUser(stub, args)
 	case "deleteAllUsers":
 		return t.deleteAllUsers(stub)
-	case "trade":
-		return t.trade(stub, args)
+	case "transfer":
+		return t.transfer(stub, args)
 	case "deleteAllTokens":
 		return t.deleteAllTokens(stub)
 	case "queryTokens":
@@ -96,7 +96,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	}
 }
 
-func (t *SimpleChaincode) trade(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(args) != 4 {
 		return shim.Error("Incorrect number of arguments. Expecting 3: from, to, amount")
 	}
