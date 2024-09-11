@@ -213,6 +213,16 @@ func (t *SimpleChaincode) mint(stub shim.ChaincodeStubInterface, args []string) 
 
 	toUser.Wallet.Tokens[symbol] += totalSupply
 
+	toJson, err := json.Marshal(toUser)
+	if err != nil {
+		return shim.Error("Failed to marshal User")
+	}
+
+	err = stub.PutState(to, toJson)
+	if err != nil {
+		return shim.Error("Failed to mint token to User")
+	}
+
 	tokenJSON, err := json.Marshal(token)
 	if err != nil {
 		return shim.Error("Failed to marshal Token")
