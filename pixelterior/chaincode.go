@@ -183,7 +183,7 @@ func (t *SimpleChaincode) mint(stub shim.ChaincodeStubInterface, args []string) 
 
 		token.TotalSupply += totalSupply
 	} else {
-		totalSupply, err := strconv.Atoi(totalAmount)
+		totalSupply, err = strconv.Atoi(totalAmount)
 		if err != nil {
 			return shim.Error("Invalid totalAmount inputed. Expecting integer value")
 		}
