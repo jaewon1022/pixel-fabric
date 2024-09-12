@@ -73,8 +73,9 @@ class ReadWorkload extends WorkloadModuleBase {
 
       await this.sutAdapter.sendRequests(txArgs);
     }
-}
 */
+}
+
 function createWorkloadModule() {
   return new ReadWorkload();
 }
