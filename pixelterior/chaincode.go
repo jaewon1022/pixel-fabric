@@ -58,8 +58,8 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	user1JSON, _ := json.Marshal(user1)
 	user2JSON, _ := json.Marshal(user2)
 
-	stub.PutState("user1", user1JSON)
-	stub.PutState("user2", user2JSON)
+	stub.PutState("user_user1", user1JSON)
+	stub.PutState("user_user2", user2JSON)
 
 	fmt.Println("ex02 Initialized well")
 
@@ -136,10 +136,6 @@ func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []stri
 	}
 
 	// 토큰 전송
-	if toUser.Wallet.Tokens == nil {
-		toUser.Wallet.Tokens = make(map[string]int)
-	}
-
 	fromUser.Wallet.Tokens[tokenSymbol] -= amount
 	toUser.Wallet.Tokens[tokenSymbol] += amount
 
@@ -149,7 +145,7 @@ func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []stri
 	stub.PutState(from, fromJSON)
 	stub.PutState(to, toJSON)
 
-	return shim.Success([]byte("Token transfer successful"))
+	return shim.Success([]byte(nil))
 }
 
 func (t *SimpleChaincode) mint(stub shim.ChaincodeStubInterface, args []string) pb.Response {
@@ -172,22 +168,17 @@ func (t *SimpleChaincode) mint(stub shim.ChaincodeStubInterface, args []string) 
 	var token Token
 	var totalSupply int
 
+	totalSupply, err = strconv.Atoi(totalAmount)
+	if err != nil {
+		return shim.Error("Invalid totalAmount inputed. Expecting integer value")
+	}
+
 	// 이미 토큰이 존재할 경우 총 발행량을 더하고, 존재하지 않을 경우 토큰을 새로 발행함
 	if symbolBytes != nil {
 		json.Unmarshal(symbolBytes, &token)
 
-		totalSupply, err = strconv.Atoi(totalAmount)
-		if err != nil {
-			return shim.Error("Invalid totalAmount inputed. Expecting integer value")
-		}
-
 		token.TotalSupply += totalSupply
 	} else {
-		totalSupply, err = strconv.Atoi(totalAmount)
-		if err != nil {
-			return shim.Error("Invalid totalAmount inputed. Expecting integer value")
-		}
-
 		token = Token{
 			Name:        name,
 			Symbol:      symbol,
@@ -195,7 +186,6 @@ func (t *SimpleChaincode) mint(stub shim.ChaincodeStubInterface, args []string) 
 		}
 	}
 
-	// to 에게 토큰을 발행
 	toBytes, err := stub.GetState(to)
 	if err != nil {
 		return shim.Error("Failed to get recipient")
@@ -204,12 +194,9 @@ func (t *SimpleChaincode) mint(stub shim.ChaincodeStubInterface, args []string) 
 		return shim.Error("Recipient not found")
 	}
 
+	// to 에게 토큰을 발행
 	var toUser User
 	json.Unmarshal(toBytes, &toUser)
-
-	if toUser.Wallet.Tokens == nil {
-		toUser.Wallet.Tokens = make(map[string]int)
-	}
 
 	toUser.Wallet.Tokens[symbol] += totalSupply
 
@@ -233,7 +220,7 @@ func (t *SimpleChaincode) mint(stub shim.ChaincodeStubInterface, args []string) 
 		return shim.Error("Failed to create Token")
 	}
 
-	return shim.Success([]byte("Token minted successfully"))
+	return shim.Success([]byte(nil))
 }
 
 func (t *SimpleChaincode) deleteAllTokens(stub shim.ChaincodeStubInterface) pb.Response {
@@ -315,27 +302,28 @@ func (t *SimpleChaincode) createUser(stub shim.ChaincodeStubInterface, args []st
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
 
-	name := args[0]
+	userId := args[0]
+	userKey := "user_" + userId
 
-	existingUserBytes, _ := stub.GetState(name)
+	existingUserBytes, _ := stub.GetState(userId)
 
 	if existingUserBytes != nil {
 		return shim.Error("Username already exists")
 	}
 
 	newUser := User{
-		Name:   name,
+		Name:   userId,
 		Wallet: Wallet{Address: "0x", Tokens: make(map[string]int)},
 	}
 
 	newUserBytes, _ := json.Marshal(newUser)
-	err := stub.PutState(name, newUserBytes)
+	err := stub.PutState(userKey, newUserBytes)
 
 	if err != nil {
 		return shim.Error("Failed to create user")
 	}
 
-	return shim.Success([]byte("User created successfully"))
+	return shim.Success([]byte(nil))
 }
 
 func (t *SimpleChaincode) deleteUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
@@ -361,7 +349,7 @@ func (t *SimpleChaincode) deleteUser(stub shim.ChaincodeStubInterface, args []st
 }
 
 func (t *SimpleChaincode) queryUsers(stub shim.ChaincodeStubInterface) pb.Response {
-	iterator, err := stub.GetStateByRange("", "")
+	iterator, err := stub.GetStateByRange("user_", "user_~")
 
 	if err != nil {
 		return shim.Error("Failed to get users")
@@ -386,8 +374,9 @@ func (t *SimpleChaincode) queryUser(stub shim.ChaincodeStubInterface, args []str
 	}
 
 	userId := args[0]
+	userKey := "user_" + userId
 
-	userBytes, err := stub.GetState(userId)
+	userBytes, err := stub.GetState(userKey)
 
 	if err != nil {
 		return shim.Error("Failed to get user")
