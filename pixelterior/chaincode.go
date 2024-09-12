@@ -224,7 +224,7 @@ func (t *SimpleChaincode) mint(stub shim.ChaincodeStubInterface, args []string) 
 }
 
 func (t *SimpleChaincode) deleteAllTokens(stub shim.ChaincodeStubInterface) pb.Response {
-	iterator, err := stub.GetStateByRange("asset_", "asset_~")
+	iterator, err := stub.GetStateByRange("token_", "token_~")
 
 	if err != nil {
 		return shim.Error("Failed to get assets")
@@ -237,24 +237,24 @@ func (t *SimpleChaincode) deleteAllTokens(stub shim.ChaincodeStubInterface) pb.R
 		stub.DelState(assetKey)
 	}
 
-	return shim.Success([]byte("All assets deleted successfully"))
+	return shim.Success([]byte("All token deleted"))
 }
 
 func (t *SimpleChaincode) deleteAllUsers(stub shim.ChaincodeStubInterface) pb.Response {
 	iterator, err := stub.GetStateByRange("", "")
 
 	if err != nil {
-		return shim.Error("Failed to get users")
+		return shim.Error("Failed to get states")
 	}
 	defer iterator.Close()
 
 	for iterator.HasNext() {
-		userData, _ := iterator.Next()
-		userKey := userData.Key
-		stub.DelState(userKey)
+		state, _ := iterator.Next()
+		stateKey := state.Key
+		stub.DelState(stateKey)
 	}
 
-	return shim.Success([]byte("All users deleted successfully"))
+	return shim.Success([]byte("All state deleted"))
 }
 
 func (t *SimpleChaincode) queryTokens(stub shim.ChaincodeStubInterface) pb.Response {
