@@ -26,15 +26,17 @@ class ReadWorkload extends WorkloadModuleBase {
 
     for (let i = 1; i <= this.roundArguments.assets; i++) {
       const assetId = `${this.workerIndex}-${i}`;
+      const tokenSymbol = `TTN${i}`;
+
       console.log(
         `Creating asset "${this.workerIndex}-${i}" by workerNode ${workerIndex}`
       );
 
       let txArgs = {
         contractId: this.roundArguments.contractId,
-        contractFunction: "createAsset",
+        contractFunction: "mint",
         invokerIdentity: "client",
-        contractArguments: [assetId, "100", "10000"],
+        contractArguments: [assetId, tokenSymbol, "100", "user1"],
         readOnly: false,
       };
 
@@ -47,36 +49,32 @@ class ReadWorkload extends WorkloadModuleBase {
 
     let txArgs = {
       contractId: this.roundArguments.contractId,
-      contractFunction: "queryAsset",
+      contractFunction: "queryUser",
       invokerIdentity: "client",
-      contractArguments: [`${this.workerIndex}-${randomId}`],
+      contractArguments: ["user1"],
       readOnly: true,
     };
 
     return this.sutAdapter.sendRequests(txArgs);
   }
-
+/*
   async cleanupWorkloadModule() {
-    for (let i = 1; i <= this.roundArguments.assets; i++) {
-      const assetId = `${this.workerIndex}-${i}`;
-
       console.log(
-        `Deleting asset "${assetId}" by workerNode ${this.workerIndex}`
+        "Deleting all Tokens while testing READ Transaction"
       );
 
       let txArgs = {
         contractId: this.roundArguments.contractId,
-        contractFunction: "deleteAsset",
+        contractFunction: "deleteAllTokens",
         invokerIdentity: "client",
-        contractArguments: [assetId],
+        contractArguments: [],
         readOnly: false,
       };
 
       await this.sutAdapter.sendRequests(txArgs);
     }
-  }
 }
-
+*/
 function createWorkloadModule() {
   return new ReadWorkload();
 }
