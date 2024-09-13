@@ -98,11 +98,14 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 
 func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(args) != 4 {
-		return shim.Error("Incorrect number of arguments. Expecting 3: from, to, amount")
+		return shim.Error("Incorrect number of arguments. Expecting 4: from, to, symbol, amount")
 	}
 
 	from := args[0]
 	to := args[1]
+	fromKey := "user_" + from
+	toKey := "user_" + to
+
 	tokenSymbol := args[2]
 	amount, err := strconv.Atoi(args[3])
 	if err != nil {
@@ -110,7 +113,7 @@ func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []stri
 	}
 
 	// 송신자와 수신자의 상태 가져오기
-	fromBytes, err := stub.GetState(from)
+	fromBytes, err := stub.GetState(fromKey)
 	if err != nil {
 		return shim.Error("Failed to get sender: " + err.Error())
 	}
@@ -118,7 +121,7 @@ func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []stri
 		return shim.Error("Sender not found")
 	}
 
-	toBytes, err := stub.GetState(to)
+	toBytes, err := stub.GetState(toKey)
 	if err != nil {
 		return shim.Error("Failed to get recipient: " + err.Error())
 	}
@@ -160,7 +163,7 @@ func (t *SimpleChaincode) mint(stub shim.ChaincodeStubInterface, args []string) 
 
 	tokenKey := "token_" + symbol
 
-	symbolBytes, err := stub.GetState(tokenKey)
+	tokenBytes, err := stub.GetState(tokenKey)
 	if err != nil {
 		return shim.Error("Failed to get tokens")
 	}
@@ -174,8 +177,8 @@ func (t *SimpleChaincode) mint(stub shim.ChaincodeStubInterface, args []string) 
 	}
 
 	// 이미 토큰이 존재할 경우 총 발행량을 더하고, 존재하지 않을 경우 토큰을 새로 발행함
-	if symbolBytes != nil {
-		json.Unmarshal(symbolBytes, &token)
+	if tokenBytes != nil {
+		json.Unmarshal(tokenBytes, &token)
 
 		token.TotalSupply += totalSupply
 	} else {
@@ -186,7 +189,7 @@ func (t *SimpleChaincode) mint(stub shim.ChaincodeStubInterface, args []string) 
 		}
 	}
 
-	toBytes, err := stub.GetState(to)
+	toBytes, err := stub.GetState("user_" + to)
 	if err != nil {
 		return shim.Error("Failed to get recipient")
 	}
@@ -305,7 +308,7 @@ func (t *SimpleChaincode) createUser(stub shim.ChaincodeStubInterface, args []st
 	userId := args[0]
 	userKey := "user_" + userId
 
-	existingUserBytes, _ := stub.GetState(userId)
+	existingUserBytes, _ := stub.GetState(userKey)
 
 	if existingUserBytes != nil {
 		return shim.Error("Username already exists")
@@ -331,15 +334,16 @@ func (t *SimpleChaincode) deleteUser(stub shim.ChaincodeStubInterface, args []st
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
 
-	name := args[0]
+	userId := args[0]
+	userKey := "user_" + userId
 
-	existingUserBytes, _ := stub.GetState(name)
+	existingUserBytes, _ := stub.GetState(userKey)
 
 	if existingUserBytes == nil {
 		return shim.Error("User not found")
 	}
 
-	err := stub.DelState(name)
+	err := stub.DelState(userKey)
 
 	if err != nil {
 		return shim.Error("Failed to delete user")
