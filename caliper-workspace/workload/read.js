@@ -26,7 +26,7 @@ class ReadWorkload extends WorkloadModuleBase {
 
     for (let i = 1; i <= this.roundArguments.assets; i++) {
       const assetId = `${this.workerIndex}-${i}`;
-      const tokenSymbol = `TTN${i}`;
+      const tokenSymbol = `TTN${assetId}`;
 
       console.log(
         `Creating asset "${this.workerIndex}-${i}" by workerNode ${workerIndex}`

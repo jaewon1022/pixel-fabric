@@ -12,7 +12,7 @@ test:
       workload:
         module: workload/read.js
         arguments:
-          assets: 10
+          assets: 1
           contractId: pixelterior-go
 
 #    - label: Write Transaction
