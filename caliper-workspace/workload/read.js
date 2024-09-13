@@ -45,8 +45,6 @@ class ReadWorkload extends WorkloadModuleBase {
   }
 
   async submitTransaction() {
-    const randomId = Math.floor(Math.random() * this.roundArguments.assets) + 1;
-
     let txArgs = {
       contractId: this.roundArguments.contractId,
       contractFunction: "queryUser",
@@ -57,7 +55,8 @@ class ReadWorkload extends WorkloadModuleBase {
 
     return this.sutAdapter.sendRequests(txArgs);
   }
-/*
+
+  /*
   async cleanupWorkloadModule() {
       console.log(
         "Deleting all Tokens while testing READ Transaction"
