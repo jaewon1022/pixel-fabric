@@ -75,14 +75,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.mint(stub, args)
 	case "createUser":
 		return t.createUser(stub, args)
-	case "deleteUser":
-		return t.deleteUser(stub, args)
-	case "deleteAllUsers":
-		return t.deleteAllUsers(stub)
 	case "transfer":
 		return t.transfer(stub, args)
-	case "deleteAllTokens":
-		return t.deleteAllTokens(stub)
 	case "queryTokens":
 		return t.queryTokens(stub)
 	case "queryToken":
@@ -226,38 +220,33 @@ func (t *SimpleChaincode) mint(stub shim.ChaincodeStubInterface, args []string) 
 	return shim.Success([]byte(nil))
 }
 
-func (t *SimpleChaincode) deleteAllTokens(stub shim.ChaincodeStubInterface) pb.Response {
-	iterator, err := stub.GetStateByRange("token_", "token_~")
+func (t *SimpleChaincode) createUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
+
+	userId := args[0]
+	userKey := "user_" + userId
+
+	existingUserBytes, _ := stub.GetState(userKey)
+
+	if existingUserBytes != nil {
+		return shim.Error("Username already exists")
+	}
+
+	newUser := User{
+		Name:   userId,
+		Wallet: Wallet{Address: "0x", Tokens: make(map[string]int)},
+	}
+
+	newUserBytes, _ := json.Marshal(newUser)
+	err := stub.PutState(userKey, newUserBytes)
 
 	if err != nil {
-		return shim.Error("Failed to get assets")
-	}
-	defer iterator.Close()
-
-	for iterator.HasNext() {
-		assetData, _ := iterator.Next()
-		assetKey := assetData.Key
-		stub.DelState(assetKey)
+		return shim.Error("Failed to create user")
 	}
 
-	return shim.Success([]byte("All token deleted"))
-}
-
-func (t *SimpleChaincode) deleteAllUsers(stub shim.ChaincodeStubInterface) pb.Response {
-	iterator, err := stub.GetStateByRange("", "")
-
-	if err != nil {
-		return shim.Error("Failed to get states")
-	}
-	defer iterator.Close()
-
-	for iterator.HasNext() {
-		state, _ := iterator.Next()
-		stateKey := state.Key
-		stub.DelState(stateKey)
-	}
-
-	return shim.Success([]byte("All state deleted"))
+	return shim.Success([]byte(nil))
 }
 
 func (t *SimpleChaincode) queryTokens(stub shim.ChaincodeStubInterface) pb.Response {
@@ -298,58 +287,6 @@ func (t *SimpleChaincode) queryToken(stub shim.ChaincodeStubInterface, args []st
 	}
 
 	return shim.Success(tokenBytes)
-}
-
-func (t *SimpleChaincode) createUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	if len(args) != 1 {
-		return shim.Error("Incorrect number of arguments. Expecting 1")
-	}
-
-	userId := args[0]
-	userKey := "user_" + userId
-
-	existingUserBytes, _ := stub.GetState(userKey)
-
-	if existingUserBytes != nil {
-		return shim.Error("Username already exists")
-	}
-
-	newUser := User{
-		Name:   userId,
-		Wallet: Wallet{Address: "0x", Tokens: make(map[string]int)},
-	}
-
-	newUserBytes, _ := json.Marshal(newUser)
-	err := stub.PutState(userKey, newUserBytes)
-
-	if err != nil {
-		return shim.Error("Failed to create user")
-	}
-
-	return shim.Success([]byte(nil))
-}
-
-func (t *SimpleChaincode) deleteUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	if len(args) != 1 {
-		return shim.Error("Incorrect number of arguments. Expecting 1")
-	}
-
-	userId := args[0]
-	userKey := "user_" + userId
-
-	existingUserBytes, _ := stub.GetState(userKey)
-
-	if existingUserBytes == nil {
-		return shim.Error("User not found")
-	}
-
-	err := stub.DelState(userKey)
-
-	if err != nil {
-		return shim.Error("Failed to delete user")
-	}
-
-	return shim.Success([]byte("User deleted successfully"))
 }
 
 func (t *SimpleChaincode) queryUsers(stub shim.ChaincodeStubInterface) pb.Response {
@@ -393,80 +330,3 @@ func (t *SimpleChaincode) queryUser(stub shim.ChaincodeStubInterface, args []str
 	return shim.Success(userBytes)
 }
 
-func (t *SimpleChaincode) invoke(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	var A, B string
-	var Aval, Bval int
-	var X int
-	var err error
-
-	if len(args) != 3 {
-		return shim.Error("Incorrect number of arguments. Expecting 3")
-	}
-
-	A = args[0]
-	B = args[1]
-
-	Avalbytes, err := stub.GetState(A)
-	if err != nil {
-		return shim.Error("Failed to get state")
-	}
-	if Avalbytes == nil {
-		return shim.Error("Entity not found")
-	}
-	Aval, _ = strconv.Atoi(string(Avalbytes))
-
-	Bvalbytes, err := stub.GetState(B)
-	if err != nil {
-		return shim.Error("Failed to get state")
-	}
-	if Bvalbytes == nil {
-		return shim.Error("Entity not found")
-	}
-	Bval, _ = strconv.Atoi(string(Bvalbytes))
-
-	X, err = strconv.Atoi(args[2])
-	if err != nil {
-		return shim.Error("Invalid transaction amount, expecting a integer value")
-	}
-	Aval = Aval - X
-	Bval = Bval + X
-	fmt.Printf("Aval = %d, Bval = %d\n", Aval, Bval)
-
-	err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-
-	err = stub.PutState(B, []byte(strconv.Itoa(Bval)))
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-
-	return shim.Success(nil)
-}
-
-func (t *SimpleChaincode) query(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	var A string
-	var err error
-
-	if len(args) != 1 {
-		return shim.Error("Incorrect number of arguments. Expecting name of the person to query")
-	}
-
-	A = args[0]
-
-	Avalbytes, err := stub.GetState(A)
-	if err != nil {
-		jsonResp := "{\"Error\":\"Failed to get state for " + A + "\"}"
-		return shim.Error(jsonResp)
-	}
-
-	if Avalbytes == nil {
-		jsonResp := "{\"Error\":\"Nil amount for " + A + "\"}"
-		return shim.Error(jsonResp)
-	}
-
-	jsonResp := "{\"Name\":\"" + A + "\",\"Amount\":\"" + string(Avalbytes) + "\"}"
-	fmt.Printf("Query Response:%s\n", jsonResp)
-	return shim.Success(Avalbytes)
-}
