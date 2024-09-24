@@ -2,7 +2,7 @@
 
 const { WorkloadModuleBase } = require("@hyperledger/caliper-core");
 
-class ReadWorkload extends WorkloadModuleBase {
+class WriteWorkload extends WorkloadModuleBase {
   constructor() {
     super();
   }
@@ -53,7 +53,7 @@ class ReadWorkload extends WorkloadModuleBase {
       contractId: this.roundArguments.contractId,
       contractFunction: "mint",
       invokerIdentity: "client",
-      contractArguments: [assetId, tokenSymbol, "100", "user1"],
+      contractArguments: [assetId, tokenSymbol, "100"],
       readOnly: false,
     };
 
@@ -82,7 +82,7 @@ class ReadWorkload extends WorkloadModuleBase {
 }
 
 function createWorkloadModule() {
-  return new ReadWorkload();
+  return new WriteWorkload();
 }
 
 module.exports.createWorkloadModule = createWorkloadModule;
