@@ -7,14 +7,18 @@ import (
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
+	"github.com/oklog/ulid"
 )
 
 type SimpleChaincode struct {
 }
 
 type User struct {
-	Name   string         `json:"name"`
-	Tokens map[string]int `json:"tokens"`
+	Id          string         `json:"id"`
+	Email       string         `json:"email"`
+	PhoneNumber string         `json:"phoneNumber"`
+	RealName    string         `json:"realName"`
+	Tokens      map[string]int `json:"tokens"`
 }
 
 type Token struct {
@@ -35,20 +39,32 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 
 	stub.PutState("MTK", tokenJSON)
 
+	user1Id := ulid.MustNew(ulid.Now(), nil).String()
+	user2Id := ulid.MustNew(ulid.Now(), nil).String()
+
+	user1Key := "user_" + user1Id
+	user2Key := "user_" + user2Id
+
 	user1 := User{
-		Name:   "user1",
-		Tokens: map[string]int{"MTK": 500000},
+		Id:          user1Id,
+		Email:       "andyjaewon@naver.com",
+		PhoneNumber: "010-9381-4181",
+		RealName:    "양재원",
+		Tokens:      map[string]int{"MTK": 500000},
 	}
 	user2 := User{
-		Name:   "user2",
-		Tokens: map[string]int{"MTK": 500000},
+		Id:          user2Id,
+		Email:       "andyjaewon@geniesoft.io",
+		PhoneNumber: "010-1234-5678",
+		RealName:    "양재투",
+		Tokens:      map[string]int{"MTK": 500000},
 	}
 
 	user1JSON, _ := json.Marshal(user1)
 	user2JSON, _ := json.Marshal(user2)
 
-	stub.PutState("user_user1", user1JSON)
-	stub.PutState("user_user2", user2JSON)
+	stub.PutState(user1Key, user1JSON)
+	stub.PutState(user2Key, user2JSON)
 
 	fmt.Println("ex02 Initialized well")
 
@@ -87,7 +103,7 @@ func (t *SimpleChaincode) mint(stub shim.ChaincodeStubInterface, args []string) 
 	}
 
 	symbol := args[0]
-	totalAmount := args[1]
+	amount := args[1]
 
 	tokenKey := "token_" + symbol
 
@@ -97,24 +113,24 @@ func (t *SimpleChaincode) mint(stub shim.ChaincodeStubInterface, args []string) 
 	}
 
 	var token Token
-	var totalSupply int
+	var supplyAmount int
 
-	totalSupply, err = strconv.Atoi(totalAmount)
+	supplyAmount, err = strconv.Atoi(amount)
 	if err != nil {
-		return shim.Error("Invalid totalAmount inputed. Expecting integer value")
+		return shim.Error("Invalid amount inputed. Expecting integer value")
 	}
 
 	// 이미 토큰이 존재할 경우 총 발행량을 더하고, 존재하지 않을 경우 토큰을 새로 발행함
 	if tokenBytes != nil {
 		json.Unmarshal(tokenBytes, &token)
 
-		token.TotalSupply += totalSupply
-		token.Remain += totalSupply
+		token.TotalSupply += supplyAmount
+		token.Remain += supplyAmount
 	} else {
 		token = Token{
 			Symbol:      symbol,
-			TotalSupply: totalSupply,
-			Remain:      totalSupply,
+			TotalSupply: supplyAmount,
+			Remain:      supplyAmount,
 		}
 	}
 
@@ -132,11 +148,15 @@ func (t *SimpleChaincode) mint(stub shim.ChaincodeStubInterface, args []string) 
 }
 
 func (t *SimpleChaincode) createUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	if len(args) != 1 {
-		return shim.Error("Incorrect number of arguments. Expecting 1")
+	if len(args) != 3 {
+		return shim.Error("Incorrect number of arguments. Expecting 3: email, phoneNumber, realName")
 	}
 
-	userId := args[0]
+	email := args[0]
+	phoneNumber := args[1]
+	realName := args[2]
+
+	userId := ulid.MustNew(ulid.Now(), nil).String()
 	userKey := "user_" + userId
 
 	existingUserBytes, _ := stub.GetState(userKey)
@@ -146,8 +166,11 @@ func (t *SimpleChaincode) createUser(stub shim.ChaincodeStubInterface, args []st
 	}
 
 	newUser := User{
-		Name:   userId,
-		Tokens: make(map[string]int),
+		Id:          userId,
+		Email:       email,
+		PhoneNumber: phoneNumber,
+		RealName:    realName,
+		Tokens:      make(map[string]int),
 	}
 
 	newUserBytes, _ := json.Marshal(newUser)
@@ -221,14 +244,14 @@ func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []stri
 
 	from := args[0]
 	to := args[1]
-	fromKey := "user_" + from
-	toKey := "user_" + to
-
-	tokenSymbol := args[2]
+	symbol := args[2]
 	amount, err := strconv.Atoi(args[3])
 	if err != nil {
 		return shim.Error("Invalid amount: " + err.Error())
 	}
+
+	fromKey := "user_" + from
+	toKey := "user_" + to
 
 	// 송신자와 수신자의 상태 가져오기
 	fromBytes, err := stub.GetState(fromKey)
@@ -252,13 +275,13 @@ func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []stri
 	json.Unmarshal(toBytes, &toUser)
 
 	// 잔액 확인
-	if fromUser.Tokens[tokenSymbol] < amount {
+	if fromUser.Tokens[symbol] < amount {
 		return shim.Error("Insufficient balance")
 	}
 
 	// 토큰 전송
-	fromUser.Tokens[tokenSymbol] -= amount
-	toUser.Tokens[tokenSymbol] += amount
+	fromUser.Tokens[symbol] -= amount
+	toUser.Tokens[symbol] += amount
 
 	// 상태 업데이트
 	fromJSON, _ := json.Marshal(fromUser)
@@ -294,8 +317,8 @@ func (t *SimpleChaincode) queryToken(stub shim.ChaincodeStubInterface, args []st
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
 
-	name := args[0]
-	tokenKey := "token_" + name
+	symbol := args[0]
+	tokenKey := "token_" + symbol
 
 	tokenBytes, err := stub.GetState(tokenKey)
 	if err != nil {
