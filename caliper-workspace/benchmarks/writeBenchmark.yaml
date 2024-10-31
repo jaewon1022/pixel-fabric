@@ -1,0 +1,17 @@
+test:
+  name: benchmarking chaincode
+  workers:
+    number: 10
+
+  rounds:
+    - label: Write Transaction
+      txDuration: 30
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 350
+      workload:
+        module: workload/write.js
+        arguments:
+          assets: 10
+          contractId: pixelterior-go

@@ -1,0 +1,16 @@
+test:
+  name: benchmarking chaincode
+  workers:
+    number: 10
+
+  rounds:
+    - label: Read Transaction
+      txDuration: 60
+      rateControl:
+        type: fixed-load
+        opts: { transactionLoad: 5000, startingTps: 2000 }
+      workload:
+        module: workload/read.js
+        arguments:
+          assets: 1
+          contractId: pixelterior-go
