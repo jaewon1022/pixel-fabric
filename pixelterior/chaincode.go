@@ -82,54 +82,62 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 }
 
 func (t *SimpleChaincode) mint(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	// 인자 수 확인
 	if len(args) != 2 {
-		return shim.Error("Incorrect number of arguments. Expecting 3")
+		return shim.Error("Incorrect number of arguments. Expecting 2: symbol, totalAmount")
 	}
 
+	// 인자 파싱
 	symbol := args[0]
-	totalAmount := args[1]
+	totalAmountStr := args[1]
+	totalAmount, err := strconv.Atoi(totalAmountStr)
+	if err != nil {
+		return shim.Error("Invalid totalAmount input. Expecting integer value")
+	}
 
+	// 토큰 키 설정
 	tokenKey := "token_" + symbol
 
+	// 기존 토큰 조회
 	tokenBytes, err := stub.GetState(tokenKey)
 	if err != nil {
-		return shim.Error("Failed to get tokens")
+		return shim.Error(fmt.Sprintf("Failed to get token: %s", err.Error()))
 	}
 
 	var token Token
-	var totalSupply int
 
-	totalSupply, err = strconv.Atoi(totalAmount)
-	if err != nil {
-		return shim.Error("Invalid totalAmount inputed. Expecting integer value")
-	}
-
-	// 이미 토큰이 존재할 경우 총 발행량을 더하고, 존재하지 않을 경우 토큰을 새로 발행함
+	// 토큰이 이미 존재할 경우 총 공급량과 잔여량 업데이트
 	if tokenBytes != nil {
-		json.Unmarshal(tokenBytes, &token)
-
-		token.TotalSupply += totalSupply
-		token.Remain += totalSupply
+		err = json.Unmarshal(tokenBytes, &token)
+		if err != nil {
+			return shim.Error(fmt.Sprintf("Failed to unmarshal existing token: %s", err.Error()))
+		}
+		token.TotalSupply += totalAmount
+		token.Remain += totalAmount
 	} else {
+		// 토큰이 존재하지 않을 경우 새로 생성
 		token = Token{
 			Symbol:      symbol,
-			TotalSupply: totalSupply,
-			Remain:      totalSupply,
+			TotalSupply: totalAmount,
+			Remain:      totalAmount,
 		}
 	}
 
+	// 토큰을 JSON으로 직렬화하고 상태 업데이트
 	tokenJSON, err := json.Marshal(token)
 	if err != nil {
-		return shim.Error("Failed to marshal Token")
+		return shim.Error(fmt.Sprintf("Failed to marshal token: %s", err.Error()))
 	}
 
 	err = stub.PutState(tokenKey, tokenJSON)
 	if err != nil {
-		return shim.Error("Failed to create Token")
+		return shim.Error(fmt.Sprintf("Failed to put token state: %s", err.Error()))
 	}
 
-	return shim.Success([]byte(nil))
+	// 성공 응답 반환
+	return shim.Success(nil)
 }
+
 
 func (t *SimpleChaincode) createUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(args) != 1 {
