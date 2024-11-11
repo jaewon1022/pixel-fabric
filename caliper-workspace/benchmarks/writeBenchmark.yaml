@@ -14,4 +14,4 @@ test:
         module: workload/write.js
         arguments:
           assets: 10
-          contractId: pixelterior-go
+          contractId: channel2
