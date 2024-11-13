@@ -9,7 +9,7 @@ test:
       rateControl:
         type: fixed-rate
         opts:
-          tps: 350
+          tps: 250
       workload:
         module: workload/write.js
         arguments:
