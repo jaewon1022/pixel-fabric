@@ -14,4 +14,4 @@ test:
         module: workload/write.js
         arguments:
           assets: 10
-          contractId: channel3
+          contractId: channel2
