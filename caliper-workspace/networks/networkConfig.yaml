@@ -5,9 +5,9 @@ caliper:
   blockchain: fabric
 
 channels:
-  - channelName: channel2
+  - channelName: channel3
     contracts:
-      - id: channel2
+      - id: channel3
 
 organizations:
   - mspid: org-msp

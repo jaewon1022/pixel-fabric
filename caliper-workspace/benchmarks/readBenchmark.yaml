@@ -13,4 +13,4 @@ test:
         module: workload/read.js
         arguments:
           assets: 1
-          contractId: channel2
+          contractId: channel3

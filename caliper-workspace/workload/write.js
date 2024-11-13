@@ -28,3 +28,4 @@ function createWorkloadModule() {
 }
 
 module.exports.createWorkloadModule = createWorkloadModule;
+
