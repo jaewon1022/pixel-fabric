@@ -64,6 +64,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.mint(stub, args)
 	case "allocateToken":
 		return t.allocateToken(stub, args)
+	case "deleteAllTokens":
+		return t.deleteAllTokens(stub)
 	case "createUser":
 		return t.createUser(stub, args)
 	case "transfer":
@@ -356,4 +358,21 @@ func (t *SimpleChaincode) queryUser(stub shim.ChaincodeStubInterface, args []str
 	}
 
 	return shim.Success(userBytes)
+}
+
+func (t *SimpleChaincode) deleteAllTokens(stub shim.ChaincodeStubInterface) pb.Response {
+	iterator, err := stub.GetStateByRange("token_", "token_~")
+
+	if err != nil {
+		return shim.Error("Failed to get assets")
+	}
+	defer iterator.Close()
+
+	for iterator.HasNext() {
+		assetData, _ := iterator.Next()
+		assetKey := assetData.Key
+		stub.DelState(assetKey)
+	}
+
+	return shim.Success([]byte("All token deleted"))
 }
